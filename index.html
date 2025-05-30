@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trình Tạo Mã QR Nâng Cao</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #qrcode-container img, 
+        #qrcode-container canvas {
+            margin: auto; /* Center the QR code */
+            display: block; /* Ensure it behaves as a block for margin auto to work */
+        }
+        .custom-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007AFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.4-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 0.65rem auto;
+            padding-right: 2.5rem; /* Make space for the arrow */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="container mx-auto max-w-xl">
+        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl">
+            <h1 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-8">
+                Trình Tạo Mã QR
+            </h1>
+
+            <div class="mb-6">
+                <label for="qr-text" class="block text-gray-700 text-sm font-semibold mb-2">
+                    Nhập văn bản hoặc URL:
+                </label>
+                <textarea id="qr-text" rows="3" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ví dụ: https://www.example.com hoặc nội dung bất kỳ"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label for="qr-size" class="block text-gray-700 text-sm font-semibold mb-2">Kích thước (pixel):</label>
+                    <select id="qr-size" class="custom-select shadow-sm border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="128">128 x 128</option>
+                        <option value="256" selected>256 x 256</option>
+                        <option value="300">300 x 300</option>
+                        <option value="512">512 x 512</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="qr-correction" class="block text-gray-700 text-sm font-semibold mb-2">Mức sửa lỗi:</label>
+                    <select id="qr-correction" class="custom-select shadow-sm border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="L">Thấp (L)</option>
+                        <option value="M">Trung bình (M)</option>
+                        <option value="Q">Khá (Q)</option>
+                        <option value="H" selected>Cao (H)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="generate-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-150 ease-in-out mb-6">
+                Tạo Mã QR
+            </button>
+
+            <div id="qrcode-wrapper" class="mb-6">
+                <div id="qrcode-container" class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex justify-center items-center min-h-[200px] sm:min-h-[280px] bg-gray-50">
+                    <p id="qr-placeholder" class="text-gray-500 text-center">Mã QR của bạn sẽ xuất hiện ở đây</p>
+                    </div>
+            </div>
+            
+            <div id="error-message" class="text-red-500 text-sm mt-2 mb-4 text-center"></div>
+
+            <button id="download-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-150 ease-in-out hidden">
+                Tải Xuống Mã QR (PNG)
+            </button>
+
+            <div class="mt-8 p-4 bg-yellow-50 border border-yellow-300 rounded-lg text-yellow-700 text-sm">
+                <h3 class="font-semibold mb-2">Lưu ý quan trọng:</h3>
+                <p>Để mã QR của bạn không bị các ứng dụng (như Zalo) cảnh báo là "đường link nguy hiểm", hãy đảm bảo URL bạn nhập:</p>
+                <ul class="list-disc list-inside mt-1">
+                    <li>Là một URL đầy đủ và hợp lệ (ví dụ: <strong>https://</strong>www.tenmienantoan.com).</li>
+                    <li>Trỏ đến một trang web uy tín, an toàn và có chứng chỉ SSL (HTTPS).</li>
+                    <li>Tránh sử dụng các dịch vụ rút gọn link không rõ nguồn gốc nếu có thể.</li>
+                </ul>
+                <p class="mt-2">Việc cảnh báo phụ thuộc vào chính sách bảo mật của từng ứng dụng quét mã.</p>
+            </div>
+        </div>
+
+        <footer class="text-center text-gray-600 mt-8 text-sm">
+            <p>Được tạo bởi Akenjo</p>
+        </footer>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const qrTextInput = document.getElementById('qr-text');
+        const generateBtn = document.getElementById('generate-btn');
+        const qrCodeContainer = document.getElementById('qrcode-container');
+        const qrPlaceholder = document.getElementById('qr-placeholder');
+        const downloadBtn = document.getElementById('download-btn');
+        const errorMessage = document.getElementById('error-message');
+        const qrSizeSelect = document.getElementById('qr-size');
+        const qrCorrectionSelect = document.getElementById('qr-correction');
+        
+        let qrCodeInstance = null; 
+
+        // Function to map correction level string to QRCode.CorrectLevel object
+        function getCorrectLevel(levelString) {
+            switch (levelString) {
+                case 'L': return QRCode.CorrectLevel.L;
+                case 'M': return QRCode.CorrectLevel.M;
+                case 'Q': return QRCode.CorrectLevel.Q;
+                case 'H': return QRCode.CorrectLevel.H;
+                default: return QRCode.CorrectLevel.H;
+            }
+        }
+
+        // Event listener for the generate button
+        generateBtn.addEventListener('click', () => {
+            const text = qrTextInput.value.trim();
+            const size = parseInt(qrSizeSelect.value);
+            const correctionLevelString = qrCorrectionSelect.value;
+            const correctLevel = getCorrectLevel(correctionLevelString);
+            
+            // Clear previous QR code and error message
+            qrCodeContainer.innerHTML = ''; 
+            if (!qrCodeContainer.contains(qrPlaceholder)) {
+                 qrCodeContainer.appendChild(qrPlaceholder);
+            }
+            qrPlaceholder.classList.remove('hidden');
+            downloadBtn.classList.add('hidden');
+            errorMessage.textContent = '';
+
+            if (text === "") {
+                errorMessage.textContent = 'Vui lòng nhập văn bản hoặc URL để tạo mã QR.';
+                qrTextInput.focus();
+                return;
+            }
+
+            qrPlaceholder.classList.add('hidden');
+
+            try {
+                qrCodeContainer.innerHTML = ''; // Ensure container is empty
+                
+                qrCodeInstance = new QRCode(qrCodeContainer, {
+                    text: text,
+                    width: size,
+                    height: size,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: correctLevel 
+                });
+
+                setTimeout(() => {
+                    if (qrCodeContainer.querySelector('img') || qrCodeContainer.querySelector('canvas')) {
+                         downloadBtn.classList.remove('hidden');
+                    } else {
+                        errorMessage.textContent = 'Không thể tạo mã QR. Vui lòng thử lại.';
+                        qrPlaceholder.classList.remove('hidden'); 
+                    }
+                }, 250); // Increased delay slightly for larger QRs
+
+            } catch (error) {
+                console.error("Error generating QR code:", error);
+                errorMessage.textContent = 'Đã xảy ra lỗi khi tạo mã QR. Vui lòng thử lại.';
+                qrPlaceholder.classList.remove('hidden');
+                downloadBtn.classList.add('hidden');
+            }
+        });
+
+        // Event listener for the download button
+        downloadBtn.addEventListener('click', () => {
+            const qrImage = qrCodeContainer.querySelector('img');
+            const qrCanvas = qrCodeContainer.querySelector('canvas');
+            let fileName = 'qrcode.png';
+            try {
+                // Try to create a more descriptive filename
+                const urlText = qrTextInput.value.trim();
+                if (urlText) {
+                    let domain = urlText.replace(/^https?:\/\//, '').replace(/^www\./, '');
+                    domain = domain.split('/')[0].split('?')[0].split('#')[0]; // Get domain part
+                    if (domain.length > 20) domain = domain.substring(0, 20); // Limit length
+                    if (domain) fileName = `qr_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+                }
+            } catch (e) { /* ignore, use default filename */ }
+
+
+            if (qrImage && qrImage.src) {
+                const link = document.createElement('a');
+                link.href = qrImage.src;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else if (qrCanvas) {
+                const link = document.createElement('a');
+                link.href = qrCanvas.toDataURL('image/png');
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                 errorMessage.textContent = 'Không tìm thấy mã QR để tải xuống.';
+            }
+        });
+    </script>
+
+</body>
+</html>
