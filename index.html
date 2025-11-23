@@ -3,307 +3,412 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trình Tạo Mã QR Pro - Akenjo</title>
+    <title>Trình Tạo QR Code Ultimate - Akenjo Style</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Thư viện QR Code Styling (Mạnh mẽ hơn qrcode.js) -->
-    <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- QR Code Styling Lib (Phiên bản mới nhất) -->
+    <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Be Vietnam Pro', sans-serif; }
-        /* Tùy chỉnh thanh cuộn */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         
-        /* Hiệu ứng focus cho input */
-        .input-group:focus-within label { color: #2563eb; }
-        .input-group:focus-within input, .input-group:focus-within select { 
-            border-color: #3b82f6; 
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .tab-btn.active {
+            background-color: #eff6ff; color: #2563eb; border-color: #2563eb; box-shadow: 0 1px 2px rgba(37, 99, 235, 0.1);
         }
+        
+        /* Accordion transition */
+        .accordion-content { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
+        .accordion-content.open { max-height: 1200px; opacity: 1; }
+        
+        /* Color input wrapper */
+        .color-wrapper input[type="color"] { -webkit-appearance: none; border: none; width: 36px; height: 36px; padding: 0; overflow: hidden; border-radius: 8px; cursor: pointer; }
+        .color-wrapper input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        .color-wrapper input[type="color"]::-webkit-color-swatch { border: none; }
+
+        /* Range slider */
+        input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: #e2e8f0; outline: none; border-radius: 4px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: #2563eb; cursor: pointer; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        input[type=range]::-moz-range-thumb { width: 18px; height: 18px; background: #2563eb; cursor: pointer; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+        /* Shape Button active state */
+        .shape-btn.active { background-color: #eff6ff; border-color: #2563eb; color: #2563eb; font-weight: 500; }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen text-gray-800">
+<body class="text-gray-800 antialiased">
 
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-200">
-                    QR
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 supports-backdrop-blur:bg-white/95 backdrop-blur">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-sm">
+                    <i class="ph ph-qr-code text-xl font-bold"></i>
                 </div>
-                <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                    QR Studio Pro
-                </h1>
+                <span class="font-bold text-xl tracking-tight">MyQR<span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Ultimate</span></span>
             </div>
-            <a href="#" class="text-sm text-gray-500 hover:text-blue-600 font-medium transition">By Akenjo</a>
         </div>
-    </header>
+    </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- LEFT COLUMN: SETTINGS -->
+        <div class="lg:col-span-7 space-y-6">
             
-            <!-- Cột bên trái: Công cụ chỉnh sửa -->
-            <div class="lg:col-span-7 space-y-6">
+            <!-- 1. Select Type -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200/80 p-6">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-gray-800">
+                    <span class="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-bold border border-blue-100">1</span>
+                    Chọn loại QR Code
+                </h2>
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                    <button onclick="switchType('url')" class="tab-btn active flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-100 transition" data-type="url"><i class="ph ph-link text-2xl"></i><span class="text-xs font-medium">URL</span></button>
+                    <button onclick="switchType('text')" class="tab-btn flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-100 transition" data-type="text"><i class="ph ph-text-aa text-2xl"></i><span class="text-xs font-medium">Văn bản</span></button>
+                    <button onclick="switchType('wifi')" class="tab-btn flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-100 transition" data-type="wifi"><i class="ph ph-wifi-high text-2xl"></i><span class="text-xs font-medium">Wi-Fi</span></button>
+                    <button onclick="switchType('vcard')" class="tab-btn flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-100 transition" data-type="vcard"><i class="ph ph-address-book text-2xl"></i><span class="text-xs font-medium">vCard</span></button>
+                    <button onclick="switchType('email')" class="tab-btn flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-100 transition" data-type="email"><i class="ph ph-envelope text-2xl"></i><span class="text-xs font-medium">Email</span></button>
+                    <button onclick="switchType('sms')" class="tab-btn flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-100 transition" data-type="sms"><i class="ph ph-chat-text text-2xl"></i><span class="text-xs font-medium">SMS</span></button>
+                </div>
+            </div>
+
+            <!-- 2. Content Input -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200/80 p-6">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-gray-800">
+                    <span class="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-bold border border-blue-100">2</span>
+                    Nội dung
+                </h2>
                 
-                <!-- 1. Nội dung -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs">1</span>
-                        Nội dung QR
-                    </h2>
-                    <div class="input-group">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">URL hoặc Văn bản</label>
-                        <textarea id="qr-data" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-700 placeholder-gray-400 outline-none transition-all resize-none" placeholder="Nhập đường dẫn trang web, văn bản, hoặc số điện thoại..."></textarea>
+                <!-- Forms (URL, Text, Wifi, vCard, Email, SMS) - Giữ nguyên như cũ -->
+                <div id="form-url" class="input-form"><label class="block text-sm font-medium text-gray-700 mb-1">Đường dẫn Website (URL)</label><input type="url" id="inp-url" class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="https://www.example.com" value="https://www.example.com"></div>
+                <div id="form-text" class="input-form hidden"><label class="block text-sm font-medium text-gray-700 mb-1">Văn bản của bạn</label><textarea id="inp-text" rows="4" class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="Nhập nội dung văn bản..."></textarea></div>
+                <div id="form-wifi" class="input-form hidden space-y-3"><div><label class="block text-sm font-medium text-gray-700 mb-1">Tên mạng (SSID)</label><input type="text" id="inp-wifi-ssid" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Tên Wifi nhà bạn"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label><input type="text" id="inp-wifi-pass" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Mật khẩu Wifi"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Loại bảo mật</label><select id="inp-wifi-type" class="w-full p-3 rounded-xl border border-gray-300 outline-none bg-white"><option value="WPA">WPA/WPA2</option><option value="WEP">WEP</option><option value="nopass">Không mật khẩu</option></select></div></div>
+                <div id="form-vcard" class="input-form hidden space-y-3"><div class="grid grid-cols-2 gap-3"><input type="text" id="inp-vcard-first" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Tên"><input type="text" id="inp-vcard-last" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Họ"></div><input type="tel" id="inp-vcard-phone" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Số điện thoại"><input type="email" id="inp-vcard-email" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Email"><input type="text" id="inp-vcard-org" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Công ty / Tổ chức"><input type="url" id="inp-vcard-web" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Website"></div>
+                <div id="form-email" class="input-form hidden space-y-3"><input type="email" id="inp-email-to" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Gửi đến (Email)"><input type="text" id="inp-email-sub" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Tiêu đề"><textarea id="inp-email-body" rows="3" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Nội dung Email"></textarea></div>
+                <div id="form-sms" class="input-form hidden space-y-3"><input type="tel" id="inp-sms-phone" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Số điện thoại người nhận"><textarea id="inp-sms-body" rows="3" class="w-full p-3 rounded-xl border border-gray-300 outline-none" placeholder="Nội dung tin nhắn"></textarea></div>
+            </div>
+
+            <!-- 3. Design Customization (ĐÃ NÂNG CẤP) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200/80 overflow-hidden divide-y divide-gray-100">
+                
+                <!-- Color Section -->
+                <button class="w-full p-5 flex items-center justify-between hover:bg-gray-50 transition" onclick="toggleAccordion('acc-color')">
+                    <span class="font-bold flex items-center gap-3 text-gray-700"><div class="p-2 bg-purple-100 text-purple-600 rounded-lg"><i class="ph ph-palette text-lg"></i></div> Màu sắc</span>
+                    <i class="ph ph-caret-down text-gray-400"></i>
+                </button>
+                <div id="acc-color" class="accordion-content bg-gray-50/50">
+                    <div class="p-6 grid grid-cols-3 gap-4">
+                        <div class="bg-white p-3 rounded-xl border border-gray-200 text-center"><label class="text-xs font-semibold text-gray-500 mb-2 block uppercase">Chấm (Dots)</label><div class="color-wrapper inline-block"><input type="color" id="col-dots" value="#000000"></div></div>
+                        <div class="bg-white p-3 rounded-xl border border-gray-200 text-center"><label class="text-xs font-semibold text-gray-500 mb-2 block uppercase">Mắt (Eyes)</label><div class="color-wrapper inline-block"><input type="color" id="col-eye" value="#000000"></div></div>
+                        <div class="bg-white p-3 rounded-xl border border-gray-200 text-center"><label class="text-xs font-semibold text-gray-500 mb-2 block uppercase">Nền (BG)</label><div class="color-wrapper inline-block"><input type="color" id="col-bg" value="#ffffff"></div></div>
                     </div>
                 </div>
 
-                <!-- 2. Giao diện & Hình dáng -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs">2</span>
-                        Tùy biến hình dáng
-                    </h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        <div class="input-group">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Kiểu chấm (Dots)</label>
-                            <select id="dots-style" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white outline-none transition-all cursor-pointer">
-                                <option value="square">Vuông (Cổ điển)</option>
-                                <option value="dots">Chấm tròn</option>
-                                <option value="rounded" selected>Bo tròn (Rounded)</option>
-                                <option value="extra-rounded">Bo tròn mềm</option>
-                                <option value="classy">Classy</option>
-                                <option value="classy-rounded">Classy Rounded</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Kiểu góc (Corners)</label>
-                            <select id="corners-style" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white outline-none transition-all cursor-pointer">
-                                <option value="square">Vuông</option>
-                                <option value="dot">Chấm tròn</option>
-                                <option value="extra-rounded" selected>Bo tròn</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. Màu sắc -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-xs">3</span>
-                        Màu sắc thương hiệu
-                    </h2>
-                    <div class="grid grid-cols-2 gap-5">
+                <!-- Shape Section (ĐÃ MỞ RỘNG NHIỀU HƠN) -->
+                <button class="w-full p-5 flex items-center justify-between hover:bg-gray-50 transition" onclick="toggleAccordion('acc-shape')">
+                    <span class="font-bold flex items-center gap-3 text-gray-700"><div class="p-2 bg-orange-100 text-orange-600 rounded-lg"><i class="ph ph-shapes text-lg"></i></div> Hình dáng</span>
+                    <i class="ph ph-caret-down text-gray-400"></i>
+                </button>
+                <div id="acc-shape" class="accordion-content bg-gray-50/50">
+                    <div class="p-6 space-y-6">
+                        <!-- 1. Dots -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Màu mã QR</label>
-                            <div class="flex items-center gap-3">
-                                <input type="color" id="color-dots" value="#2563eb" class="w-12 h-12 rounded cursor-pointer border-0 p-0 bg-transparent">
-                                <span class="text-xs text-gray-500">Nên chọn màu tối</span>
+                            <label class="text-sm font-bold text-gray-700 mb-3 block flex items-center gap-2"><i class="ph ph-dots-nine text-blue-500"></i> Kiểu Chấm Chính (Data)</label>
+                            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="shapes-dots">
+                                <button onclick="setShape('dots', 'square', this)" class="shape-btn active p-2 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 text-xs font-medium transition">Vuông</button>
+                                <button onclick="setShape('dots', 'dots', this)" class="shape-btn p-2 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 text-xs font-medium transition">Tròn</button>
+                                <button onclick="setShape('dots', 'rounded', this)" class="shape-btn p-2 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 text-xs font-medium transition">Bo góc</button>
+                                <button onclick="setShape('dots', 'extra-rounded', this)" class="shape-btn p-2 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 text-xs font-medium transition">Mềm mại</button>
+                                <button onclick="setShape('dots', 'classy', this)" class="shape-btn p-2 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 text-xs font-medium transition">Classy</button>
+                                <button onclick="setShape('dots', 'classy-rounded', this)" class="shape-btn p-2 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 text-xs font-medium transition">Classy Tròn</button>
                             </div>
                         </div>
+                        <!-- 2. Eye Frames -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Màu nền</label>
-                            <div class="flex items-center gap-3">
-                                <input type="color" id="color-bg" value="#ffffff" class="w-12 h-12 rounded cursor-pointer border-0 p-0 bg-transparent">
-                                <span class="text-xs text-gray-500">Nên chọn màu sáng</span>
+                             <label class="text-sm font-bold text-gray-700 mb-3 block flex items-center gap-2"><i class="ph ph-corners-out text-indigo-500"></i> Khung Mắt Ngoài (Eye Frame)</label>
+                            <div class="grid grid-cols-3 gap-2" id="shapes-cornersSquare">
+                                <button onclick="setShape('cornersSquare', 'square', this)" class="shape-btn active p-2 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 text-xs font-medium transition">Vuông</button>
+                                <button onclick="setShape('cornersSquare', 'dot', this)" class="shape-btn p-2 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 text-xs font-medium transition">Tròn</button>
+                                <button onclick="setShape('cornersSquare', 'extra-rounded', this)" class="shape-btn p-2 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 text-xs font-medium transition">Mềm mại</button>
+                            </div>
+                        </div>
+                         <!-- 3. Eye Dots -->
+                        <div>
+                             <label class="text-sm font-bold text-gray-700 mb-3 block flex items-center gap-2"><i class="ph ph-circle-fill text-teal-500"></i> Điểm Mắt Trong (Eye Dot)</label>
+                            <div class="grid grid-cols-3 gap-2" id="shapes-cornersDot">
+                                <button onclick="setShape('cornersDot', 'square', this)" class="shape-btn active p-2 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 text-xs font-medium transition">Vuông</button>
+                                <button onclick="setShape('cornersDot', 'dot', this)" class="shape-btn p-2 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 text-xs font-medium transition">Tròn</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 4. Logo -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">4</span>
-                        Logo trung tâm
-                    </h2>
-                    <div class="flex items-center gap-4">
-                        <label class="flex-1 cursor-pointer group">
-                            <div class="w-full h-32 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center gap-2 group-hover:border-blue-500 group-hover:bg-blue-50 transition-all">
-                                <svg class="w-8 h-8 text-gray-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                <span class="text-sm text-gray-500 group-hover:text-blue-600">Bấm để tải ảnh logo</span>
+                <!-- Logo Section (ĐÃ SỬA LỖI BO GÓC) -->
+                <button class="w-full p-5 flex items-center justify-between hover:bg-gray-50 transition" onclick="toggleAccordion('acc-logo')">
+                    <span class="font-bold flex items-center gap-3 text-gray-700"><div class="p-2 bg-green-100 text-green-600 rounded-lg"><i class="ph ph-image text-lg"></i></div> Logo</span>
+                    <i class="ph ph-caret-down text-gray-400"></i>
+                </button>
+                <div id="acc-logo" class="accordion-content bg-gray-50/50">
+                    <div class="p-6">
+                        <label class="flex flex-col items-center justify-center w-full h-36 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-white hover:bg-gray-50 transition group">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i class="ph ph-cloud-arrow-up text-4xl text-gray-300 group-hover:text-blue-500 transition mb-2"></i>
+                                <p class="text-sm font-medium text-gray-500 group-hover:text-blue-600">Bấm để tải Logo lên</p>
                             </div>
-                            <input type="file" id="logo-input" accept="image/*" class="hidden">
+                            <input id="inp-logo" type="file" class="hidden" accept="image/*" />
                         </label>
-                        <div class="w-1/3">
-                             <button id="clear-logo" class="w-full py-2 px-4 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-sm font-medium transition hidden">
-                                Xóa Logo
-                            </button>
+                        
+                        <!-- Logo Radius Slider (ĐÃ SỬA SANG PIXEL) -->
+                        <div class="mt-6 bg-white p-4 rounded-xl border border-gray-200">
+                            <label for="logo-radius" class="block text-sm font-semibold text-gray-700 mb-3 flex justify-between items-center">
+                                <span>Bo góc Logo</span>
+                                <span id="logo-radius-val" class="text-xs font-mono bg-gray-100 py-1 px-2 rounded-md text-gray-600">0px</span>
+                            </label>
+                            <input type="range" id="logo-radius" min="0" max="200" value="0" class="w-full">
                         </div>
+
+                        <button onclick="removeLogo()" class="mt-4 w-full py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl border border-transparent hover:border-red-100 transition hidden flex items-center justify-center gap-2" id="btn-remove-logo">
+                            <i class="ph ph-trash"></i> Xóa Logo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Background Image Section (ĐÃ SỬA LỖI TRONG SUỐT) -->
+                <button class="w-full p-5 flex items-center justify-between hover:bg-gray-50 transition" onclick="toggleAccordion('acc-bg')">
+                    <span class="font-bold flex items-center gap-3 text-gray-700"><div class="p-2 bg-teal-100 text-teal-600 rounded-lg"><i class="ph ph-image-square text-lg"></i></div> Hình nền (Background)</span>
+                    <i class="ph ph-caret-down text-gray-400"></i>
+                </button>
+                <div id="acc-bg" class="accordion-content bg-gray-50/50">
+                    <div class="p-6">
+                        <label class="flex flex-col items-center justify-center w-full h-36 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-white hover:bg-gray-50 transition group">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i class="ph ph-image text-4xl text-gray-300 group-hover:text-teal-500 transition mb-2"></i>
+                                <p class="text-sm font-medium text-gray-500 group-hover:text-teal-600">Bấm để tải Ảnh nền lên</p>
+                            </div>
+                            <input id="inp-bg-image" type="file" class="hidden" accept="image/*" />
+                        </label>
+                        <button onclick="removeBgImage()" class="mt-4 w-full py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl border border-transparent hover:border-red-100 transition hidden flex items-center justify-center gap-2" id="btn-remove-bg">
+                            <i class="ph ph-trash"></i> Xóa Ảnh nền
+                        </button>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Cột bên phải: Xem trước (Sticky) -->
-            <div class="lg:col-span-5">
-                <div class="sticky top-24 space-y-6">
-                    <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 text-center relative overflow-hidden">
-                        <!-- Decorative bg -->
-                        <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-blue-50 to-indigo-50 z-0"></div>
-                        
-                        <h3 class="relative z-10 text-gray-800 font-bold text-lg mb-6">Xem trước (Live Preview)</h3>
-                        
-                        <!-- QR Container -->
-                        <div class="relative z-10 flex justify-center items-center min-h-[300px]">
-                            <div id="canvas" class="bg-white p-4 rounded-xl shadow-sm mx-auto"></div>
-                        </div>
+        </div>
 
-                        <!-- Actions -->
-                        <div class="relative z-10 mt-8 grid grid-cols-2 gap-3">
-                            <select id="file-ext" class="px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 font-medium outline-none cursor-pointer">
-                                <option value="png">Định dạng PNG</option>
-                                <option value="jpeg">Định dạng JPEG</option>
-                                <option value="webp">Định dạng WEBP</option>
-                            </select>
-                            <button id="download-btn" class="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-blue-200 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                Tải xuống
-                            </button>
-                        </div>
+        <!-- RIGHT COLUMN: PREVIEW -->
+        <div class="lg:col-span-5">
+            <div class="sticky top-24">
+                <div class="bg-white rounded-[2rem] shadow-xl border border-white/50 p-6 text-center relative overflow-hidden ring-1 ring-gray-200/50 backdrop-blur-xl">
+                    <!-- Decorative gradient BG -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 opacity-50 z-0"></div>
+                    
+                    <h3 class="text-lg font-bold text-gray-800 relative z-10 mb-6 flex items-center justify-center gap-2">
+                        <i class="ph ph-eye text-blue-600"></i> Xem trước (Live Preview)
+                    </h3>
+
+                    <!-- Canvas Container -->
+                    <div class="relative inline-block p-1 bg-white rounded-2xl shadow-sm border border-gray-100 z-10">
+                        <div id="canvas-container" class="rounded-xl overflow-hidden"></div>
                     </div>
 
-                    <!-- Mẹo -->
-                    <div class="bg-yellow-50 border border-yellow-100 rounded-xl p-4 flex gap-3">
-                        <svg class="w-6 h-6 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <p class="text-sm text-yellow-800">
-                            <strong>Mẹo thiết kế:</strong> Hãy đảm bảo màu mã QR (dots) đủ tối và màu nền đủ sáng để camera điện thoại có thể quét dễ dàng.
-                        </p>
+                    <div class="relative z-10 mt-8 flex gap-3">
+                        <div class="relative w-1/3">
+                            <select id="download-format" class="w-full p-3 pl-10 rounded-xl border border-gray-200 bg-white text-sm font-medium outline-none appearance-none cursor-pointer hover:border-blue-300 transition">
+                                <option value="png">PNG</option>
+                                <option value="jpeg">JPEG</option>
+                                <option value="webp">WEBP</option>
+                                <option value="svg">SVG (Vector)</option>
+                            </select>
+                            <i class="ph ph-file-image absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
+                        </div>
+                        <button onclick="downloadQR()" class="w-2/3 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-blue-200 active:scale-95 transition-all">
+                            <i class="ph ph-download-simple text-xl"></i>
+                            Tải Xuống
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+
     </main>
 
     <script>
-        // Khởi tạo thư viện QRCodeStyling
+        // --- 1. INITIAL CONFIGURATION ---
+        let currentType = 'url';
+        // Sử dụng thư viện phiên bản mới nhất để hỗ trợ tốt hơn
         const qrCode = new QRCodeStyling({
-            width: 300,
-            height: 300,
-            type: "canvas", // hoặc 'svg'
+            width: 320,
+            height: 320,
+            type: "canvas",
             data: "https://www.example.com",
             image: "",
-            dotsOptions: {
-                color: "#2563eb",
-                type: "rounded"
-            },
-            backgroundOptions: {
-                color: "#ffffff",
-            },
-            imageOptions: {
-                crossOrigin: "anonymous",
-                margin: 5, // Khoảng cách xung quanh logo
-                imageSize: 0.4 // Kích thước logo (0-1)
-            },
-            cornersSquareOptions: {
-                type: "extra-rounded",
-                color: "#2563eb"
-            },
-            cornersDotOptions: {
-                type: "dot",
-                color: "#2563eb"
+            dotsOptions: { color: "#000000", type: "square" },
+            backgroundOptions: { color: "#ffffff" },
+            imageOptions: { crossOrigin: "anonymous", margin: 8, imageSize: 0.4, imageBorderRadius: 0 },
+            cornersSquareOptions: { type: "square", color: "#000000" },
+            cornersDotOptions: { type: "square", color: "#000000" }
+        });
+
+        qrCode.append(document.getElementById("canvas-container"));
+
+        // --- 2. CORE LOGIC FUNCTIONS ---
+
+        // Switch Content Type Tabs
+        function switchType(type) {
+            currentType = type;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === type);
+            });
+            document.querySelectorAll('.input-form').forEach(form => form.classList.add('hidden'));
+            document.getElementById(`form-${type}`).classList.remove('hidden');
+            updateQR();
+        }
+
+        // Toggle Accordion Sections
+        function toggleAccordion(id) {
+            const el = document.getElementById(id);
+            const isOpen = el.classList.contains('open');
+            document.querySelectorAll('.accordion-content').forEach(ac => ac.classList.remove('open'));
+            if (!isOpen) el.classList.add('open');
+        }
+
+        // Set Shape Types (Updated for 3 categories)
+        function setShape(category, type, btnElement) {
+            // Update active state for buttons in the same category
+            const parentGrid = btnElement.closest('.grid');
+            parentGrid.querySelectorAll('.shape-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            // Update QR Code based on category
+            let updateObj = {};
+            if (category === 'dots') {
+                updateObj = { dotsOptions: { type: type } };
+            } else if (category === 'cornersSquare') {
+                updateObj = { cornersSquareOptions: { type: type } };
+            } else if (category === 'cornersDot') {
+                updateObj = { cornersDotOptions: { type: type } };
+            }
+            qrCode.update(updateObj);
+        }
+
+        // Generate Data String based on current type
+        function generateData() {
+            const getVal = (id) => document.getElementById(id).value;
+            switch(currentType) {
+                case 'url': return getVal('inp-url') || "https://www.example.com";
+                case 'text': return getVal('inp-text') || "Hello World";
+                case 'wifi':
+                    const ssid = getVal('inp-wifi-ssid');
+                    const pass = getVal('inp-wifi-pass');
+                    const type = getVal('inp-wifi-type');
+                    if(!ssid) return "WIFI:T:nopass;S:MyNetwork;;";
+                    return `WIFI:T:${type};S:${ssid};P:${pass};;`;
+                case 'email':
+                    return `mailto:${getVal('inp-email-to')}?subject=${encodeURIComponent(getVal('inp-email-sub'))}&body=${encodeURIComponent(getVal('inp-email-body'))}`;
+                case 'sms':
+                    return `smsto:${getVal('inp-sms-phone')}:${getVal('inp-sms-body')}`;
+                case 'vcard':
+                    const fn = getVal('inp-vcard-first'), ln = getVal('inp-vcard-last');
+                    return `BEGIN:VCARD\nVERSION:3.0\nN:${ln};${fn}\nFN:${fn} ${ln}\nORG:${getVal('inp-vcard-org')}\nTEL:${getVal('inp-vcard-phone')}\nEMAIL:${getVal('inp-vcard-email')}\nURL:${getVal('inp-vcard-web')}\nEND:VCARD`;
+                default: return "https://www.example.com";
+            }
+        }
+
+        // Main Update Function
+        function updateQR() {
+            qrCode.update({ data: generateData() });
+        }
+
+        // --- 3. EVENT LISTENERS ---
+
+        // Real-time Content Update
+        document.querySelectorAll('input:not([type="file"], [type="range"], [type="color"]), textarea, select:not(#download-format)').forEach(el => {
+            el.addEventListener('input', updateQR);
+            el.addEventListener('change', updateQR);
+        });
+
+        // Color Updates
+        document.getElementById('col-dots').addEventListener('input', (e) => qrCode.update({ dotsOptions: { color: e.target.value } }));
+        document.getElementById('col-bg').addEventListener('input', (e) => {
+            // Only update BG color if no BG image is set
+            if (document.getElementById('inp-bg-image').value === "") {
+                qrCode.update({ backgroundOptions: { color: e.target.value } });
             }
         });
+        document.getElementById('col-eye').addEventListener('input', (e) => qrCode.update({ cornersSquareOptions: { color: e.target.value }, cornersDotOptions: { color: e.target.value } }));
 
-        // Hàm render QR Code
-        const renderQR = () => {
-            document.getElementById("canvas").innerHTML = "";
-            qrCode.append(document.getElementById("canvas"));
-        };
-
-        // Render lần đầu
-        renderQR();
-
-        // --- CÁC HÀM XỬ LÝ SỰ KIỆN ---
-
-        // 1. Cập nhật nội dung
-        const qrDataInput = document.getElementById("qr-data");
-        qrDataInput.addEventListener("keyup", () => {
-            const val = qrDataInput.value.trim();
-            qrCode.update({ data: val || "https://www.example.com" });
-        });
-
-        // 2. Cập nhật kiểu chấm (Dots)
-        const dotsStyle = document.getElementById("dots-style");
-        dotsStyle.addEventListener("change", (e) => {
-            qrCode.update({
-                dotsOptions: { type: e.target.value }
-            });
-        });
-
-        // 3. Cập nhật kiểu góc (Corners)
-        const cornersStyle = document.getElementById("corners-style");
-        cornersStyle.addEventListener("change", (e) => {
-            qrCode.update({
-                cornersSquareOptions: { type: e.target.value },
-                cornersDotOptions: { type: e.target.value === 'square' ? 'square' : 'dot' }
-            });
-        });
-
-        // 4. Cập nhật màu sắc
-        const colorDots = document.getElementById("color-dots");
-        const colorBg = document.getElementById("color-bg");
-
-        const updateColors = () => {
-            const dotColor = colorDots.value;
-            const bgColor = colorBg.value;
-            qrCode.update({
-                dotsOptions: { color: dotColor },
-                cornersSquareOptions: { color: dotColor },
-                cornersDotOptions: { color: dotColor },
-                backgroundOptions: { color: bgColor }
-            });
-        };
-
-        colorDots.addEventListener("input", updateColors);
-        colorBg.addEventListener("input", updateColors);
-
-        // 5. Xử lý tải lên Logo
-        const logoInput = document.getElementById("logo-input");
-        const clearLogoBtn = document.getElementById("clear-logo");
-
-        logoInput.addEventListener("change", (e) => {
+        // Logo Upload & Radius (FIXED)
+        document.getElementById('inp-logo').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = (event) => {
-                    qrCode.update({
-                        image: event.target.result
-                    });
-                    clearLogoBtn.classList.remove("hidden");
-                };
+                reader.onload = (e) => {
+                    qrCode.update({ image: e.target.result });
+                    document.getElementById('btn-remove-logo').classList.remove('hidden');
+                }
                 reader.readAsDataURL(file);
             }
         });
 
-        clearLogoBtn.addEventListener("click", () => {
-            qrCode.update({ image: "" });
-            logoInput.value = "";
-            clearLogoBtn.classList.add("hidden");
+        // Logo Radius Slider (Using Pixels now)
+        document.getElementById('logo-radius').addEventListener('input', (e) => {
+            const val = Number(e.target.value);
+            document.getElementById('logo-radius-val').innerText = val + "px";
+            // Pass pixel value directly (requires newer library version)
+            qrCode.update({ imageOptions: { imageBorderRadius: val } });
         });
 
-        // 6. Tải xuống
-        const downloadBtn = document.getElementById("download-btn");
-        const fileExt = document.getElementById("file-ext");
+        function removeLogo() {
+            qrCode.update({ image: '', imageOptions: { imageBorderRadius: 0 } });
+            document.getElementById('inp-logo').value = '';
+            document.getElementById('btn-remove-logo').classList.add('hidden');
+            document.getElementById('logo-radius').value = 0;
+            document.getElementById('logo-radius-val').innerText = "0px";
+        }
 
-        downloadBtn.addEventListener("click", () => {
-            const ext = fileExt.value;
-            const dataVal = qrDataInput.value.trim();
-            // Tạo tên file từ nội dung hoặc mặc định
-            let fileName = "qr-code";
-            if (dataVal) {
-                fileName = dataVal.replace(/[^a-zA-Z0-9]/g, "_").substring(0, 15);
+        // Background Image Upload (FIXED TRANSPARENCY)
+        document.getElementById('inp-bg-image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    qrCode.update({
+                        backgroundOptions: {
+                            image: e.target.result,
+                            color: 'transparent' // Force transparent BG
+                        }
+                    });
+                    document.getElementById('btn-remove-bg').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
             }
-            
-            qrCode.download({
-                name: fileName,
-                extension: ext
-            });
         });
 
+        function removeBgImage() {
+            qrCode.update({
+                backgroundOptions: {
+                    image: '',
+                    color: document.getElementById('col-bg').value // Restore BG color
+                }
+            });
+            document.getElementById('inp-bg-image').value = '';
+            document.getElementById('btn-remove-bg').classList.add('hidden');
+        }
+
+        // Download Function
+        function downloadQR() {
+            const ext = document.getElementById('download-format').value;
+            qrCode.download({ name: "myqr_ultimate", extension: ext });
+        }
     </script>
 </body>
 </html>
